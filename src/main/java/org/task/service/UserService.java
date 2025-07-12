@@ -3,6 +3,7 @@ package org.task.service;
 import org.task.domain.User;
 import org.task.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +31,14 @@ public class UserService {
     public User insert(User user) {
         user.setCreatedAt(new Date());
         user.setId(null);
+        if(getUserByEmail(user.getEmail()) != null) {
+            throw new IncorrectResultSizeDataAccessException("User already exists with this email", 1);
+        }
         return userRepository.save(user);
+    }
+
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     public User fromDTO(UserDTO userDto) {

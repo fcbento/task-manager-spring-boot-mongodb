@@ -2,6 +2,7 @@ package org.task.resource.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.hibernate.ObjectNotFoundException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -32,6 +33,12 @@ public class ResourceExceptionHandler {
         for(FieldError fieldError: exception.getBindingResult().getFieldErrors()) {
             error.addError(fieldError.getField(), fieldError.getDefaultMessage());
         }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(IncorrectResultSizeDataAccessException.class)
+    public ResponseEntity<StandardError> emailValidation(IncorrectResultSizeDataAccessException exception, HttpServletRequest request) {
+        StandardError error = new StandardError(HttpStatus.BAD_REQUEST.value(), exception.getMessage(), Instant.now().toString());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 }
