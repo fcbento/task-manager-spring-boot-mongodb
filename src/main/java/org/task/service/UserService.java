@@ -23,19 +23,17 @@ public class UserService {
     public User find(Integer id){
 
         Optional<User> user = userRepository.findById(id);
-        return user.get();
+        return user.orElseThrow();
     }
 
     @Transactional
     public User insert(User user) {
         user.setCreatedAt(new Date());
         user.setId(null);
-        user = userRepository.save(user);
-        return user;
+        return userRepository.save(user);
     }
 
     public User fromDTO(UserDTO userDto) {
-        User user = new User(null, passwordEncoder.encode(userDto.getPassword()), userDto.getEmail(), userDto.getName());
-        return user;
+        return new User(null, passwordEncoder.encode(userDto.getPassword()), userDto.getEmail(), userDto.getName());
     }
 }
