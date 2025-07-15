@@ -21,7 +21,7 @@ public class UserService {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
-    public User find(Integer id){
+    public User find(String id){
 
         Optional<User> user = userRepository.findById(id);
         return user.orElseThrow();
