@@ -1,11 +1,8 @@
 package org.task.dto;
 
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
-
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -19,14 +16,12 @@ public class UserDTO implements Serializable {
 
     @NotEmpty(message="Email is required")
     @Email(message="Invalid email")
-    @NotNull
     private String email;
 
     @NotEmpty(message="Password is required")
-    @NotNull
+    @Size(min = 6, message = "Password must be at least 6 characters")
     private String password;
 
     @NotEmpty(message = "Name is required")
-    @NotNull
     private String name;
 }

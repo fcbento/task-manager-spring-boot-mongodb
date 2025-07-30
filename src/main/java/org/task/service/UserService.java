@@ -8,6 +8,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.task.repository.UserRepository;
+import org.task.service.exception.EmailAlreadyExistsException;
+import org.task.service.exception.InvalidPasswordException;
 
 import java.util.Date;
 import java.util.Optional;
@@ -31,9 +33,13 @@ public class UserService {
     public User insert(User user) {
         user.setCreatedAt(new Date());
         user.setId(null);
-        if(getUserByEmail(user.getEmail()) != null) {
-            throw new IncorrectResultSizeDataAccessException("User already exists with this email", 1);
-        }
+
+        if(getUserByEmail(user.getEmail()) != null)
+            throw new EmailAlreadyExistsException("User already exists with this email");
+
+        if(user.getPassword().length() < 6)
+            throw new InvalidPasswordException("Password must be at least 6 characters");
+
         return userRepository.save(user);
     }
 
