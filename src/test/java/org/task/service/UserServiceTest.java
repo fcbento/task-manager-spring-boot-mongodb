@@ -12,6 +12,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.task.domain.User;
 import org.task.dto.UserDTO;
 import org.task.repository.UserRepository;
+import org.task.service.exception.EmailAlreadyExistsException;
+import org.task.service.exception.InvalidPasswordException;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -57,7 +59,7 @@ public class UserServiceTest {
 
         when(userRepository.findByEmail("felipe@test.com")).thenReturn(existingUser);
 
-        assertThrows(IncorrectResultSizeDataAccessException.class, () -> {
+        assertThrows(EmailAlreadyExistsException.class, () -> {
             userService.insert(newUser);
         });
     }
@@ -96,5 +98,17 @@ public class UserServiceTest {
         assertEquals("teste", result.getName());
         assertNotEquals("123456", result.getPassword());
         assertNull(result.getId());
+    }
+
+    @Test
+    public void shouldValidateMinPasswordValue(){
+        User user = new User();
+        user.setEmail("teste@teste.com");
+        user.setName("teste");
+        user.setPassword("12");
+
+        assertThrows(InvalidPasswordException.class, () -> {
+            userService.insert(user);
+        });
     }
 }
